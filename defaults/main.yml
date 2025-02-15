@@ -5,7 +5,6 @@
 
 # version management
 microk8s_version: "1.32/stable"
-microk8s_disable_snap_autoupdate: true
 
 # plugin configuration
 microk8s_plugins:

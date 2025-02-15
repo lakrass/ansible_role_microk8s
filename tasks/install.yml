@@ -98,12 +98,3 @@
   register: command_result
   changed_when: "'0 added, 0 removed' not in command_result.stdout"
   when: custom_certs.changed
-
-- name: Disable snap autoupdate
-  become: true
-  blockinfile:
-    dest: /etc/hosts
-    marker: "# {mark} ANSIBLE MANAGED: microk8s Disable snap autoupdate"
-    content: |
-      127.0.0.1 api.snapcraft.io
-  when: microk8s_disable_snap_autoupdate
