@@ -7,6 +7,6 @@
 
 - name: Import cached images
   become: yes
-  command: "microk8s microk8s images import < /tmp/images.tar"
+  command: "{{ microk8s_bin_path }}microk8s images import < /tmp/images.tar"
   register: import_cmd
   changed_when: import_cmd.rc == 0
