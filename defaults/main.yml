@@ -8,9 +8,8 @@ microk8s_version: "1.32/stable"
 microk8s_disable_snap_autoupdate: true
 
 # plugin configuration
-microk8s_dns_resolvers: 8.8.8.8,8.8.4.4
 microk8s_plugins:
-  dns: "{{ microk8s_dns_resolvers }}" # CoreDNS
+  dns: true # CoreDNS
   host-access: false # Allow Pods connecting to Host services smoothly
   ingress: false # Ingress controller for external access
   metrics-server: false # K8s Metrics Server for API access to service metrics
