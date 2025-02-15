@@ -35,7 +35,7 @@
 
 - name: Sideload images
   include_tasks: sideload-images.yml
-  when: microk8s_cached_images_tar is defined and microk8s_cached_images_tar is file
+  when: microk8s_cached_images_tar != None and microk8s_cached_images_tar is file
 
 - name: Wait for microk8s to be ready
   become: yes
@@ -67,7 +67,7 @@
     src: "{{ microk8s_csr_template }}"
     dest: /var/snap/microk8s/current/certs/csr.conf.template
     mode: 0644
-  when: microk8s_csr_template is defined and microk8s_csr_template is file
+  when: microk8s_csr_template != None and microk8s_csr_template is file
   notify:
     - Refresh certs
   register: custom_certs
