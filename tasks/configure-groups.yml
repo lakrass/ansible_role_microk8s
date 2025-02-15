@@ -9,59 +9,51 @@
   loop_control:
     loop_var: user
     label: "{{ user }}"
+  no_log: true
 
 - name: Transform user_homes into a dictionary
   set_fact:
     user_info_dict: "{{ user_info_dict | default({}) | combine({item['user']: item}) }}"
   with_items: "{{ user_info.results }}"
+  no_log: true
 
-- name: add user to group
+- name: add user to microk8s group
   become: yes
-  command: "usermod -a -G microk8s {{ user }}"
-  changed_when: true
+  user:
+    name: "{{ item }}"
+    groups: microk8s
+    append: yes
   with_items: "{{ microk8s_users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user }}"
 
 - name: Create .kube folder for the user
   become: yes
-  become_user: "{{ user }}"
+  become_user: "{{ item }}"
   file:
-    path: "{{ user_info_dict[user]['home'] }}/.kube"
+    path: "{{ user_info_dict[item]['home'] }}/.kube"
     state: directory
-    owner: "{{ user }}"
-    group: "{{ user }}"
+    owner: "{{ item }}"
+    group: "{{ item }}"
     mode: 0750
   with_items: "{{ microk8s_users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user }}"
 
 - name: create kubectl config
   become: yes
   changed_when: true
-  shell: microk8s config > {{ user_info_dict[user]['home'] }}/.kube/config
+  shell: microk8s config > {{ user_info_dict[item]['home'] }}/.kube/config
   args:
     executable: /bin/bash
   with_items: "{{ microk8s_users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user }}"
 
 - name: reaffirm permission on files
   become: yes
   file:
-    path: "{{ user_info_dict[user]['home'] }}/.kube"
+    path: "{{ user_info_dict[item]['home'] }}/.kube"
     state: directory
-    owner: "{{ user }}"
-    group: "{{ user }}"
+    owner: "{{ item }}"
+    group: "{{ item }}"
     recurse: yes
     mode: 0750
   with_items: "{{ microk8s_users }}"
-  loop_control:
-    loop_var: user
-    label: "{{ user }}"
 
 - name: add helm repository to user
   become: yes
