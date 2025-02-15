@@ -1,15 +1,14 @@
 # add user specific settings
 ---
-
 # Fetch home directories of users https://stackoverflow.com/a/48892377
 - user:
-    name: '{{ user }}'
+    name: "{{ user }}"
     state: present
   register: user_info
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
 
 - name: Transform user_homes into a dictionary
   set_fact:
@@ -20,24 +19,24 @@
   become: yes
   command: "usermod -a -G microk8s {{ user }}"
   changed_when: true
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
 
 - name: Create .kube folder for the user
   become: yes
-  become_user: '{{ user }}'
+  become_user: "{{ user }}"
   file:
     path: "{{ user_info_dict[user]['home'] }}/.kube"
     state: directory
-    owner: '{{ user }}'
-    group: '{{ user }}'
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: 0750
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
 
 - name: create kubectl config
   become: yes
@@ -45,46 +44,46 @@
   shell: microk8s config > {{ user_info_dict[user]['home'] }}/.kube/config
   args:
     executable: /bin/bash
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
 
 - name: reaffirm permission on files
   become: yes
   file:
     path: "{{ user_info_dict[user]['home'] }}/.kube"
     state: directory
-    owner: '{{ user }}'
-    group: '{{ user }}'
+    owner: "{{ user }}"
+    group: "{{ user }}"
     recurse: yes
     mode: 0750
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
 
 - name: add helm repository to user
   become: yes
-  become_user: '{{ item.0 }}'
+  become_user: "{{ item.0 }}"
   shell: "helm repo add {{ item.1.name }} {{ item.1.url }}"
   args:
     executable: /bin/bash
   changed_when: true
   with_nested:
-    - "{{ users }}"
+    - "{{ microk8s_users }}"
     - "{{ helm3_repositories }}"
   when: microk8s_plugins.helm3
 
 - name: update helm repos
   become: yes
-  become_user: '{{ user }}'
+  become_user: "{{ user }}"
   shell: "helm repo update"
   args:
     executable: /bin/bash
   changed_when: true
-  with_items: '{{ users }}'
+  with_items: "{{ microk8s_users }}"
   loop_control:
     loop_var: user
-    label: '{{ user }}'
+    label: "{{ user }}"
   when: microk8s_plugins.helm3
