@@ -62,7 +62,10 @@ microk8s_group_workers: "microk8s_workers"
 microk8s_add_workers_to_hostfile: false
 
 # for setting up custom certificate request.  Set to template name to enable
-#microk8s_csr_template: null
+microk8s_csr_template: null
 
 # when /snap/bin is not in the PATH
 microk8s_bin_path: ""
+
+# local path to tar file with chached images for microk8s to import (currently only for single-node)
+microk8s_cached_images_tar: null

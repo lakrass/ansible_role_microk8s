@@ -33,6 +33,10 @@
     classic: yes
     channel: "{{ microk8s_version }}"
 
+- name: Sideload images
+  include_tasks: sideload-images.yml
+  when: microk8s_cached_images_tar is defined and microk8s_cached_images_tar is file
+
 - name: Wait for microk8s to be ready
   become: yes
   command: "{{ microk8s_bin_path }}microk8s.status --wait-ready"

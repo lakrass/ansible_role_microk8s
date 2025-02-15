@@ -1,0 +1,12 @@
+- name: Copy cached images
+  become: yes
+  copy:
+    src: "{{ microk8s_cached_images_tar }}"
+    dest: /tmp/images.tar
+    mode: "0644"
+
+- name: Import cached images
+  become: yes
+  command: "microk8s microk8s images import < /tmp/images.tar"
+  register: import_cmd
+  changed_when: import_cmd.rc == 0
