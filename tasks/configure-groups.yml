@@ -72,7 +72,7 @@
   changed_when: true
   with_nested:
     - "{{ microk8s_users }}"
-    - "{{ helm3_repositories }}"
+    - "{{ microk8s_helm3_repositories }}"
   when: microk8s_plugins.helm3
 
 - name: update helm repos
