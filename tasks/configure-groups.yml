@@ -65,7 +65,7 @@
   with_nested:
     - "{{ microk8s_users }}"
     - "{{ microk8s_helm3_repositories }}"
-  when: microk8s_plugins.helm3
+  when: microk8s_plugins.helm3 and (microk8s_helm3_repositories | length > 0)
 
 - name: update helm repos
   become: yes
