@@ -24,6 +24,11 @@
     groups: microk8s
     append: yes
   with_items: "{{ microk8s_users }}"
+  register: useradd_task
+
+- name: Reset ssh connection to allow user changes to affect ansible user
+  ansible.builtin.meta: reset_connection
+  when: useradd_task.changed
 
 - name: Create .kube folder for the user
   become: yes
