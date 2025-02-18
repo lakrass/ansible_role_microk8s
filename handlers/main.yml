@@ -4,3 +4,8 @@
 - name: Refresh certs
   become: yes
   command: microk8s refresh-certs
+
+- name: Restart containerd
+  ansible.builtin.service:
+    name: snap.microk8s.daemon-containerd
+    state: restarted
