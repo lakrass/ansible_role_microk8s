@@ -67,3 +67,6 @@ microk8s_bin_path: ""
 
 # local path to tar file with chached images for microk8s to import (currently only for single-node)
 microk8s_cached_images_tar: null
+# add extra env variables to containerd
+# example: [{'key': 'HTTP_PROXY', 'value': 'https://proxy.example.com'}]
+microk8s_containerd_extra_env: []

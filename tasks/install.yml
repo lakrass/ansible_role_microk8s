@@ -33,6 +33,18 @@
     classic: yes
     channel: "{{ microk8s_version }}"
 
+- name: Add proxy settings
+  ansible.builtin.lineinfile:
+    path: /var/snap/microk8s/current/args/containerd-env
+    line: "{{ item.key }}={{ item.value }}"
+  with_items: "{{ microk8s_containerd_extra_env }}"
+  notify: Restart containerd
+  when: microk8s_containerd_extra_env is != None and (microk8s_containerd_extra_env | length) > 0
+  register: containerd_env
+
+- meta: flush_handlers
+  when: containerd_env.changed
+
 - name: Sideload images
   include_tasks: sideload-images.yml
   when: microk8s_cached_images_tar != None and microk8s_cached_images_tar is file
